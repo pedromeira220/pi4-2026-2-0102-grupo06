@@ -1,0 +1,60 @@
+# Sobe o sistema inteiro: Banco, Backend 1, Backend 2 e Frontend (fluxo E6).
+# Espera os três módulos clonados ao lado deste repositório (passo a passo no README).
+# Para usar pastas com outro nome, crie um .env com BACKEND1_DIR, BACKEND2_DIR e FRONTEND_DIR.
+
+services:
+  db:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pi4}
+      POSTGRES_USER: ${POSTGRES_USER:-pi4}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pi4}
+      TZ: America/Sao_Paulo
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ${BACKEND1_DIR:-../pi4-0102-g6-backend-1}/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend2:
+    build: ${BACKEND2_DIR:-../pi4-0102-g6-backend-2}
+    environment:
+      TCP_PORT: 3000                    # CT4: socket na porta 3000
+      FRONTEND_ORIGINS: http://localhost:5173
+      TZ: America/Sao_Paulo
+    ports:
+      - "8082:8082"                     # WebSocket /ws
+
+  backend1:
+    build: ${BACKEND1_DIR:-../pi4-0102-g6-backend-1}
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-pi4}
+      POSTGRES_USER: ${POSTGRES_USER:-pi4}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pi4}
+      BACKEND2_HOST: backend2
+      BACKEND2_PORTA: 3000
+      TZ: America/Sao_Paulo
+    ports:
+      - "8080:8080"                     # HTTP: consultarPedido, reiniciarDemo
+    depends_on:
+      db:
+        condition: service_healthy
+      backend2:
+        condition: service_started
+
+  frontend:
+    build: ${FRONTEND_DIR:-../pi4-0102-g6-frontend}
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend1
+      - backend2
+
+volumes:
+  pgdata:

@@ -217,7 +217,7 @@ Cada backend tem testes JUnit que rodam no GitHub Actions a cada push. No Backen
 | TE-08 | E4 | Abrir senha em Pronto | "pode retirar" sem minutos | Como esperado | Passou |
 | TE-09 | E5 | Esperar o pedido ficar pronto | Tela verde com o aviso | Como esperado | Passou |
 | TE-10 | E5 | Manter a tela depois do pronto | Aviso até o encerramento | Visível por 15 s, depois "encerrado" | Passou |
-| TE-11 | E6, RNF-01 | Clonar do zero e subir pelo README | Sobe sem passo manual | Rodado só na cópia do grupo | Não executado |
+| TE-11 | E6, RNF-01 | Clonar do GitHub numa pasta vazia e seguir o README | Sobe sem passo manual | Subiu em 1 min (com cache do Docker); senha 42 respondeu | Passou |
 | TE-12 | RNF-02 | Parar e subir o backend2 | Backend 1 responde e reconecta | 200; log do aviso; reconectou | Passou |
 | TE-13 | RNF-03 | Parar o backend2 com a tela aberta | Página reconecta sozinha | Recebeu o Pronto depois da volta | Passou |
 | TE-14 | RNF-04 | Comparar `prontoEm` com a tela | Até 10 s | 0,3 s | Passou |
@@ -232,7 +232,7 @@ Os testes JUnit entram na rastreabilidade agrupados por classe: **TE-21** `Simul
 
 ### 7.4 Resumo da execução
 
-Rodada manual de 23/11/2026: 20 casos, 19 executados, 18 passaram, 1 falhou e 1 não foi executado. Os 52 testes JUnit passaram no CI de 19/11/2026.
+Rodada manual de 23/11/2026: 20 casos executados, 19 passaram e 1 falhou (TE-20). Os 52 testes JUnit passaram no CI de 19/11/2026.
 
 ### 7.5 Defeitos conhecidos
 
